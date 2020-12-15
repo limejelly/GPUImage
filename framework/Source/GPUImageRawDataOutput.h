@@ -13,12 +13,14 @@ typedef struct GPUByteColorVector GPUByteColorVector;
 
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_IPHONE
 @interface GPUImageRawDataOutput : NSObject <GPUImageInput> {
+    GPUImageFramebuffer *outputFramebuffer;
     CGSize imageSize;
     GPUImageRotationMode inputRotation;
     BOOL outputBGRA;
 }
 #else
 @interface GPUImageRawDataOutput : NSObject <GPUImageInput> {
+    GPUImageFramebuffer *outputFramebuffer;
     CGSize imageSize;
     GPUImageRotationMode inputRotation;
     BOOL outputBGRA;
@@ -28,6 +30,7 @@ typedef struct GPUByteColorVector GPUByteColorVector;
 @property(readonly) GLubyte *rawBytesForImage;
 @property(nonatomic, copy) void(^newFrameAvailableBlock)(void);
 @property(nonatomic) BOOL enabled;
+@property(readonly) GPUImageFramebuffer *outputFramebuffer;
 
 // Initialization and teardown
 - (id)initWithImageSize:(CGSize)newImageSize resultsInBGRAFormat:(BOOL)resultsInBGRAFormat;

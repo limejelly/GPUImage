@@ -7,7 +7,7 @@
 
 @interface GPUImageRawDataOutput ()
 {
-    GPUImageFramebuffer *firstInputFramebuffer, *outputFramebuffer, *retainedFramebuffer;
+    GPUImageFramebuffer *firstInputFramebuffer, *retainedFramebuffer;
     
     BOOL hasReadFromTheCurrentFrame;
     
@@ -26,7 +26,7 @@
 @end
 
 @implementation GPUImageRawDataOutput
-
+@synthesize outputFramebuffer=outputFramebuffer;
 @synthesize rawBytesForImage = _rawBytesForImage;
 @synthesize newFrameAvailableBlock = _newFrameAvailableBlock;
 @synthesize enabled;
