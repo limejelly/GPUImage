@@ -60,8 +60,15 @@ NSString *const kGPUImageYUVFullRangeConversionForLAFragmentShaderString = SHADE
      lowp vec3 rgb;
      
      yuv.x = texture2D(luminanceTexture, textureCoordinate).r;
-     yuv.yz = texture2D(chrominanceTexture, textureCoordinate).ra - vec2(0.5, 0.5);
-     rgb = colorConversionMatrix * yuv;
+     yuv.yz = texture2D(chrominanceTexture, textureCoordinate).rg - vec2(0.5, 0.5);
+    
+//     yuv.yz = texture2D(chrominanceTexture, textureCoordinate).ra - vec2(0.5, 0.5);
+//     rgb = colorConversionMatrix * yuv;
+    
+    
+    rgb = mat3(      1,       1,      1,
+                   0, -.18732, 1.8556,
+                   1.57481, -.46813,      0) * yuv;
      
      gl_FragColor = vec4(rgb, 1);
  }
@@ -69,24 +76,34 @@ NSString *const kGPUImageYUVFullRangeConversionForLAFragmentShaderString = SHADE
 
 NSString *const kGPUImageYUVVideoRangeConversionForLAFragmentShaderString = SHADER_STRING
 (
- varying highp vec2 textureCoordinate;
- 
- uniform sampler2D luminanceTexture;
- uniform sampler2D chrominanceTexture;
- uniform mediump mat3 colorConversionMatrix;
- 
- void main()
- {
-     mediump vec3 yuv;
-     lowp vec3 rgb;
-     
-     yuv.x = texture2D(luminanceTexture, textureCoordinate).r - (16.0/255.0);
-     yuv.yz = texture2D(chrominanceTexture, textureCoordinate).ra - vec2(0.5, 0.5);
-     rgb = colorConversionMatrix * yuv;
-     
-     gl_FragColor = vec4(rgb, 1);
- }
- );
+varying highp vec2 textureCoordinate;
+
+uniform sampler2D luminanceTexture;
+uniform sampler2D chrominanceTexture;
+
+void main()
+{
+    mediump vec3 yuv;
+    lowp vec3 rgb;
+
+    yuv.x = texture2D(luminanceTexture, textureCoordinate).r;
+    yuv.yz = texture2D(chrominanceTexture, textureCoordinate).ra - vec2(0.5, 0.5);
+
+    // BT.601, which is the standard for SDTV is provided as a reference
+    /*
+     rgb = mat3(      1,       1,       1,
+     0, -.39465, 2.03211,
+     1.13983, -.58060,       0) * yuv;
+     */
+
+    // Using BT.709 which is the standard for HDTV
+    rgb = mat3(      1,       1,       1,
+            0, -.21482, 2.12798,
+            1.28033, -.38059,       0) * yuv;
+
+    gl_FragColor = vec4(rgb, 1);
+}
+);
 
 
 #pragma mark -
